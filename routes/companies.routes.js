@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const config = require('../config');
+const config = require('../config.json');
 
 const fileHandler = multer({ dest: config.uploads_dir });
 const router = express.Router();

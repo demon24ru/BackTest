@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const jwt = require('jsonwebtoken');
-const config = require('../config');
+const config = require('../config.json');
 const logger = require('../services/logger')(module);
 
 const router = Router();

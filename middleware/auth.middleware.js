@@ -3,7 +3,7 @@ const httpContext = require('express-http-context');
 const jwt = require('jsonwebtoken');
 const logger = require('../services/logger')(module);
 
-const config = require('../config');
+const config = require('../config.json');
 
 module.exports = async (req, res, next) => {
   try {

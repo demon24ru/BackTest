@@ -5,6 +5,10 @@ const fs = require('fs');
 const httpContext = require('express-http-context');
 const marked = require('marked');
 
+const db = require('./db');
+
+const logger = require('./services/logger')(module);
+
 const authRouter = require('./routes/auth.routes');
 const companiesRouter = require('./routes/companies.routes');
 const contactsRouter = require('./routes/contacts.routes');
@@ -36,7 +40,7 @@ app.get('/', (req, res) => {
   const pageContent = marked(file.toString());
 
   res.send(
-      `
+    `
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -55,5 +59,12 @@ cron.schedule('0 * * * *', () => {
     if (err) logger(err);
   });
 });
+
+db.sequelize.sync()
+  .then(() => logger.info('Database has been synchronized.'))
+  .catch((error) => {
+    logger.error(error.message);
+    process.exit(1);
+  });
 
 module.exports = app;

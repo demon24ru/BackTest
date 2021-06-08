@@ -4,6 +4,8 @@ const crypto = require('crypto');
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     // static associate(models) { }
+    static encryptPassword = (plainText, salt) => crypto.createHash('RSA-SHA256').update(plainText).update(salt).digest('hex');
+    static genSalt = () => crypto.randomBytes(4).toString('hex');
   }
 
   User.init({
@@ -28,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       validate: {
         is: {
-          args: /(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*]{6,}/g,
+          args: /[0-9]{6,}/,
           // eslint-disable-next-line quotes
           msg: `
                 Password must be NOT less than 6 characters long,
@@ -51,17 +53,23 @@ module.exports = (sequelize, DataTypes) => {
     underscored: true,
   });
 
-  User.encryptPassword = (plainText, salt) => crypto.createHash('RSA-SHA256').update(plainText).update(salt).digest('hex');
-
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      user.salt = crypto.randomBytes(16).toString('base64');
-      user.password = User.encryptPassword(user.password(), user.salt());
+      user.salt = user.genSalt();
+      user.password = user.encryptPassword(user.password(), user.salt());
     }
   };
 
   User.beforeCreate(setSaltAndPassword);
   User.beforeUpdate(setSaltAndPassword);
+
+  // eslint-disable-next-line func-names
+  User.prototype.apiData = function () {
+    return {
+      id: this.id,
+      login: this.login,
+    };
+  };
 
   return User;
 };

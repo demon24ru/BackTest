@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull: false,
     },
-    firstname: {
+    firstName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         is: {
-          args: /^((8|\+7)[- ]?)?(\(?\d{3}\)?[- ]?)?[\d\- ]{7,10}$/,
+          args: /^(8|7)[\d]{10}$/,
           msg: 'Please enter valid phone value.',
         },
       },
@@ -59,6 +59,20 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Contact',
     underscored: true,
   });
+
+  // eslint-disable-next-line func-names
+  Contact.prototype.apiData = function () {
+    return {
+      id: this.id,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      patronymic: this.patronymic,
+      phone: this.phone,
+      email: this.email,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  };
 
   return Contact;
 };

@@ -4,6 +4,8 @@ const express = require('express');
 const fs = require('fs');
 const httpContext = require('express-http-context');
 const marked = require('marked');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./doc/swagger_output.json');
 
 const db = require('./db');
 const { errorMiddleware } = require('./middleware/errors');
@@ -30,6 +32,10 @@ app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
 app.use('/', routes);
+
+// Документация
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 app.use(errorMiddleware);
 
 app.get('/', (req, res) => {

@@ -10,7 +10,8 @@
     "db:undo:migrate": "npx sequelize-cli db:migrate:undo:all",
     "db:seed": "npx sequelize-cli db:seed:all",
     "db:undo:seed": "npx sequelize-cli db:seed:undo:all",
-    "db:init": "npx sequelize db:migrate:undo:all && sequelize db:migrate && sequelize db:seed:all"
+    "db:init": "npx sequelize db:migrate:undo:all && sequelize db:migrate && sequelize db:seed:all",
+    "doc:gen": "node ./scripts/swagger-codegen.js"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
@@ -30,7 +31,8 @@
     "dotenv": "^10.0.0",
     "pg": "^8.6.0",
     "sequelize": "^6.6.2",
-    "sequelize-querystring-converter": "^1.1.0"
+    "sequelize-querystring-converter": "^1.1.0",
+    "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
     "mocha": "^5.1.1",
@@ -41,6 +43,7 @@
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "swagger-autogen": "^2.9.3"
   }
 }

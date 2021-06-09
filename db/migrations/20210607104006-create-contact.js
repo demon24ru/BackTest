@@ -9,10 +9,12 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       firstName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'first_name',
       },
       lastName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'last_name',
       },
       patronymic: {
         type: Sequelize.STRING

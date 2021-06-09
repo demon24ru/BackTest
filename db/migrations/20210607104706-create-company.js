@@ -21,10 +21,12 @@ module.exports = {
         type: Sequelize.STRING
       },
       shortName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'short_name',
       },
       businessEntity: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        field: 'business_entity',
       },
       contract: {
         type: Sequelize.JSONB

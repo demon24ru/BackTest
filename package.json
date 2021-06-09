@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha",
+    "test": "mocha --exit",
     "dev": "npx nodemon ./bin/www",
     "db:migrate": "npx sequelize-cli db:migrate",
     "db:undo:migrate": "npx sequelize-cli db:migrate:undo:all",
@@ -29,7 +29,8 @@
     "node-cron": "^2.0.3",
     "dotenv": "^10.0.0",
     "pg": "^8.6.0",
-    "sequelize": "^6.6.2"
+    "sequelize": "^6.6.2",
+    "sequelize-querystring-converter": "^1.1.0"
   },
   "devDependencies": {
     "mocha": "^5.1.1",

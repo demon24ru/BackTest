@@ -1,61 +1,54 @@
-const config = require('../config.json');
-const { port } = require('../helpers');
+const {
+  BadRequest,
+} = require('http-errors');
+const queryStringConverter = require('sequelize-querystring-converter');
+const { Company } = require('../db');
 
 module.exports = {
   get,
   update,
   del,
+  add,
 };
 
-const company = {
-  id: config.company_id,
-  contactId: config.contact_id,
-  name: 'ООО Фирма «Перспективные захоронения»',
-  shortName: 'Перспективные захоронения',
-  businessEntity: 'ООО',
-  contract: {
-    no: '12345',
-    issue_date: '2015-03-12T00:00:00Z',
-  },
-  type: ['agent', 'contractor'],
-  status: 'active',
-  createdAt: '2020-11-21T08:03:00Z',
-  updatedAt: '2020-11-23T09:30:00Z',
-};
-
-function get(req, res) {
-  const URL = _getCurrentURL(req);
-  company.photos = [{
-    name: '0b8fc462dcabf7610a91.png',
-    filepath: `${URL}0b8fc462dcabf7610a91.png`,
-    thumbpath: `${URL}0b8fc462dcabf7610a91_160x160.png`,
-  }];
-  return res.status(200).json(company);
+async function get(req, res) {
+  const { query, params } = req;
+  const { id } = params;
+  if (id) {
+    const company = await Company.findByPk(id);
+    if (!company) throw new BadRequest('No Company for this id');
+    return res.status(200).json(company.apiData(req));
+  }
+  const criteria = queryStringConverter.convert({ query });
+  const companies = await Company.findAll(criteria);
+  if (!companies.length) throw new BadRequest('No Company');
+  return res.status(200).json(companies.map((company) => company.apiData(req)));
 }
 
-function update(req, res) {
-  const requestBody = req.body;
+async function add(req, res) {
+  if (!req.body) throw new BadRequest('No Contact for added');
 
-  const URL = _getCurrentURL(req);
-  company.photos = [{
-    name: '0b8fc462dcabf7610a91.png',
-    filepath: `${URL}0b8fc462dcabf7610a91.png`,
-    thumbpath: `${URL}0b8fc462dcabf7610a91_160x160.png`,
-  }];
-
-  const updatedCompany = { ...company };
-  Object.keys(requestBody).forEach((key) => {
-    updatedCompany[key] = requestBody[key];
-  });
-  updatedCompany.updatedAt = new Date();
-
-  return res.status(200).json(updatedCompany);
+  const company = await Company.create(req.body);
+  return res.status(200).json(company.apiData(req));
 }
 
-function del(req, res) {
-  return res.status(200).end();
+async function update(req, res) {
+  const { id } = req.params;
+  if (!id) throw new BadRequest('No id Company');
+
+  const updatedCompany = await Company.findByPk(id);
+  if (!updatedCompany) throw new BadRequest('No Company for this id');
+
+  await updatedCompany.update(req.body);
+
+  return res.status(200).json(updatedCompany.apiData(req));
 }
 
-function _getCurrentURL(req) {
-  return `${req.protocol}://${req.hostname}${port === '80' || port === '443' ? '' : `:${port}`}/`;
+async function del(req, res) {
+  const { id } = req.params;
+  if (!id) throw new BadRequest('No id Company');
+
+  const deletedCompany = await Company.destroy({ where: { id } });
+
+  return res.status(200).json({ count: deletedCompany });
 }

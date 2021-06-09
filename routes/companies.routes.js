@@ -6,21 +6,40 @@ const fileHandler = multer({ dest: config.uploads_dir });
 const router = express.Router();
 
 const auth = require('../middleware/auth.middleware');
+const { catchError } = require('../middleware/errors');
 const companiesController = require('../controllers/companies.controller');
 
 const filesParamsValidator = require('../middleware/validators/files.params.validator');
 const filesController = require('../controllers/files.controller');
 
 router.get(
+  '/',
+  auth,
+  catchError(companiesController.get),
+);
+
+router.post(
+  '/',
+  auth,
+  catchError(companiesController.add),
+);
+
+router.get(
   '/:id',
   auth,
-  companiesController.get,
+  catchError(companiesController.get),
 );
 
 router.patch(
   '/:id',
   auth,
-  companiesController.update,
+  catchError(companiesController.update),
+);
+
+router.delete(
+  '/:id',
+  auth,
+  catchError(companiesController.del),
 );
 
 router.post(

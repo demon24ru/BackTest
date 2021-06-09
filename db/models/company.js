@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
   class Company extends Model {
     static associate(models) {
       Company.belongsTo(models.Contact, {
-        as: 'contacts',
+        as: 'contact',
       });
     }
   }
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Contacts',
+        model: 'contacts',
         key: 'id',
       },
       field: 'contact_id',
@@ -56,6 +56,7 @@ module.exports = (sequelize, DataTypes) => {
     photos: {
       type: DataTypes.JSONB(),
       allowNull: false,
+      defaultValue: [],
     },
     address: {
       type: DataTypes.STRING,

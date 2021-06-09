@@ -10,4 +10,9 @@ router.post(
   catchError(controller.login),
 );
 
+router.post(
+  '/signup',
+  catchError(controller.signup),
+);
+
 module.exports = router;

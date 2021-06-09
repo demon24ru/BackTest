@@ -1,33 +1,54 @@
-const config = require('../config.json');
+const {
+  BadRequest,
+} = require('http-errors');
+const queryStringConverter = require('sequelize-querystring-converter');
+const { Contact } = require('../db');
 
 module.exports = {
   get,
   update,
+  add,
+  del,
 };
 
-const contact = {
-  id: config.contact_id,
-  lastname: 'Григорьев',
-  firstname: 'Сергей',
-  patronymic: 'Петрович',
-  phone: '79162165588',
-  email: 'grigoriev@funeral.com',
-  createdAt: '2020-11-21T08:03:26.589Z',
-  updatedAt: '2020-11-23T09:30:00Z',
-};
-
-function get(req, res) {
-  return res.status(200).json(contact);
+async function get(req, res) {
+  const { query, params } = req;
+  const { id } = params;
+  if (id) {
+    const contact = await Contact.findByPk(id);
+    if (!contact) throw new BadRequest('No Contact for this id');
+    return res.status(200).json(contact.apiData());
+  }
+  const criteria = queryStringConverter.convert({ query });
+  const contacts = await Contact.findAll(criteria);
+  if (!contacts.length) throw new BadRequest('No Contacts');
+  return res.status(200).json(contacts.map((contact) => contact.apiData()));
 }
 
-function update(req, res) {
-  const requestBody = req.body;
+async function update(req, res) {
+  const { id } = req.params;
+  if (!id) throw new BadRequest('No id Contact');
 
-  const updatedContact = { ...contact };
-  Object.keys(requestBody).forEach((key) => {
-    updatedContact[key] = requestBody[key];
-  });
-  updatedContact.updatedAt = new Date();
+  const updatedContact = await Contact.findByPk(id);
+  if (!updatedContact) throw new BadRequest('No Contact for this id');
 
-  return res.status(200).json(updatedContact);
+  await updatedContact.update(req.body);
+
+  return res.status(200).json(updatedContact.apiData());
+}
+
+async function add(req, res) {
+  if (!req.body) throw new BadRequest('No Contact for added');
+
+  const contact = await Contact.create(req.body);
+  return res.status(200).json(contact.apiData());
+}
+
+async function del(req, res) {
+  const { id } = req.params;
+  if (!id) throw new BadRequest('No id Contact');
+
+  const deletedContact = await Contact.destroy({ where: { id } });
+
+  return res.status(200).json({ count: deletedContact });
 }

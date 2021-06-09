@@ -7,6 +7,7 @@ const config = require('../config.json');
 
 module.exports = {
   login,
+  signup,
 };
 
 async function login(req, res) {
@@ -32,4 +33,18 @@ async function login(req, res) {
   }
 
   throw new BadRequest('User or password error');
+}
+
+async function signup(req, res) {
+  const { user, password } = req.body;
+
+  if (!user || !password) throw new BadRequest('No user or password passed');
+
+  const usr = await User.create({
+    login: user,
+    password,
+  });
+
+  return res.status(200)
+    .json(usr.apiData());
 }

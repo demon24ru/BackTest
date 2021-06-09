@@ -9,8 +9,8 @@ module.exports = {
     for (let i = 1; i <= 50; i++) {
       demo_contacts.push({
         id: i,
-        lastName: `Имя${i}`,
-        firstName: `Фамилия${i}`,
+        last_name: `Имя${i}`,
+        first_name: `Фамилия${i}`,
         patronymic: `Отчество${i}`,
         phone: (`7${(`000000000${i}`).substr(-(i.toString().length))}`),
         email: `ru${i}@ru.ru`,
@@ -30,14 +30,14 @@ module.exports = {
         id: i,
         contact_id: contactId || 1,
         name: `ООО Фирма «Номер ${i}»`,
-        shortName: `Номер ${i}`,
-        businessEntity: 'ООО',
+        short_name: `Номер ${i}`,
+        business_entity: 'ООО',
         contract: JSON.stringify({
           no: `no ${i}`,
           issue_date: now,
         }),
         type: ['agent', 'contractor'],
-        status: (!!i % 2 ? 'active' : 'inactive'),
+        status: (!(i % 2) ? 'active' : 'inactive'),
         // eslint-disable-next-line camelcase
         photos: JSON.stringify([`${name_photo}.png`]),
         address: `Адрес ${i}`,

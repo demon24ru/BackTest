@@ -5,6 +5,7 @@ const jimp = require('jimp');
 const path = require('path');
 
 const config = require('../config.json');
+const { port } = require('../helpers');
 
 const logger = require('../services/logger')(module);
 
@@ -104,7 +105,6 @@ async function _remove(file) {
 }
 
 function _getFileURL(req, fileName) {
-  const { port } = config;
   const { user } = req;
   const url = `${req.protocol}://${req.hostname}${port === '80' || port === '443' ? '' : `:${port}`}`;
   return `${url}/images/${user}/${fileName}`;

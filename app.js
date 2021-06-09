@@ -6,12 +6,11 @@ const httpContext = require('express-http-context');
 const marked = require('marked');
 
 const db = require('./db');
+const { errorMiddleware } = require('./middleware/errors');
 
 const logger = require('./services/logger')(module);
 
-const authRouter = require('./routes/auth.routes');
-const companiesRouter = require('./routes/companies.routes');
-const contactsRouter = require('./routes/contacts.routes');
+const routes = require('./routes');
 
 const app = express();
 
@@ -30,9 +29,8 @@ app.use(express.json());
 
 app.use(express.static(`${__dirname}/public`));
 
-app.use('/auth', authRouter);
-app.use('/companies', companiesRouter);
-app.use('/contacts', contactsRouter);
+app.use('/', routes);
+app.use(errorMiddleware);
 
 app.get('/', (req, res) => {
   const path = `${__dirname}/README.md`;

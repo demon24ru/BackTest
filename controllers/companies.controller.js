@@ -1,4 +1,5 @@
 const config = require('../config.json');
+const { port } = require('../helpers');
 
 module.exports = {
   get,
@@ -56,6 +57,5 @@ function del(req, res) {
 }
 
 function _getCurrentURL(req) {
-  const { port } = config;
   return `${req.protocol}://${req.hostname}${port === '80' || port === '443' ? '' : `:${port}`}/`;
 }

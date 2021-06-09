@@ -1,10 +1,7 @@
 const { Model } = require('sequelize');
-require('dotenv').config();
+const { port } = require('../../helpers');
 
-function _getCurrentURL(req) {
-  const { port } = process.env.PORT || 8000;
-  return `${req.protocol}://${req.hostname}${port === '80' || port === '443' ? '' : `:${port}`}/`;
-}
+const _getCurrentURL = (req) => (`${req.protocol}://${req.hostname}${port === '80' || port === '443' ? '' : `:${port}`}/`);
 
 module.exports = (sequelize, DataTypes) => {
   class Company extends Model {
@@ -29,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         model: 'Contacts',
         key: 'id',
       },
+      field: 'contact_id',
     },
     name: {
       type: DataTypes.STRING,
@@ -62,7 +60,6 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
   }, {
     sequelize,

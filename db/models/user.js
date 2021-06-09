@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     login: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
       validate: {
         isAlpha: { msg: 'Login must be only letters.' },
       },
@@ -25,9 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
-      get() {
-        return () => this.getDataValue('password');
-      },
       validate: {
         is: {
           args: /[0-9]{6,}/,
@@ -42,9 +40,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     salt: {
       type: DataTypes.STRING,
-      get() {
-        return () => this.getDataValue('salt');
-      },
     },
   },
   {
@@ -55,13 +50,17 @@ module.exports = (sequelize, DataTypes) => {
 
   const setSaltAndPassword = (user) => {
     if (user.changed('password')) {
-      user.salt = user.genSalt();
-      user.password = user.encryptPassword(user.password(), user.salt());
+      user.salt = User.genSalt();
+      user.password = User.encryptPassword(user.password, user.salt);
     }
   };
 
   User.beforeCreate(setSaltAndPassword);
   User.beforeUpdate(setSaltAndPassword);
+
+  User.prototype.checkPassword = function (pass) {
+    return (User.encryptPassword(pass, this.salt) === this.password);
+  }
 
   // eslint-disable-next-line func-names
   User.prototype.apiData = function () {

@@ -1,30 +1,13 @@
 const { Router } = require('express');
-const jwt = require('jsonwebtoken');
-const config = require('../config.json');
-const logger = require('../services/logger')(module);
+const { catchError } = require('../middleware/errors');
+
+const controller = require('../controllers/auth.controller');
 
 const router = Router();
 
-router.get('/', (req, res) => {
-  const { user } = req?.query;
-
-  if (!user) {
-    logger.error('No user passed');
-    return res.status(400).json({
-      error: 'No user passed',
-    });
-  }
-
-  const token = jwt.sign(
-    { user },
-    config.app,
-    {
-      expiresIn: config.jwt_ttl,
-    },
-  );
-
-  res.header('Authorization', `Bearer ${token}`);
-  return res.status(200).end();
-});
+router.post(
+  '/login',
+  catchError(controller.login),
+);
 
 module.exports = router;

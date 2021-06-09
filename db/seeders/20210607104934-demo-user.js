@@ -13,14 +13,14 @@ module.exports = {
         login: `User${i}`,
         password: User.encryptPassword(`12345${i}`, salt),
         salt,
-        createdAt: now,
-        updatedAt: now,
+        created_at: now,
+        updated_at: now,
       });
     }
-    await queryInterface.bulkInsert('Users', demo);
+    await queryInterface.bulkInsert('users', demo);
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.bulkDelete('Users', null, {});
+    await queryInterface.bulkDelete('users', null, {});
   },
 };

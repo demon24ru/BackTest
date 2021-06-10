@@ -1,0 +1,29 @@
+version: "3"
+services:
+  api_app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: app
+    env_file: .env.prod
+    ports:
+      - 5000:5000
+    volumes:
+      - ./:/home/test-app
+      - /home/test-app/node_modules
+    working_dir: /home/test-app
+    restart: on-failure
+    depends_on:
+      - db
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=test-app
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - ./db/data/postgres:/var/lib/postgresql/data
+    ports:
+      - 5430:5432

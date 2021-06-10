@@ -12,8 +12,6 @@ RUN npm install
 
 COPY . .
 
-COPY .env.prod /home/test-app/.env
-
 ENV PORT 5000
 EXPOSE $PORT
 CMD [ "npm", "start" ]

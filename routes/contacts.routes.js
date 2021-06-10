@@ -11,6 +11,9 @@ router.get(
   auth,
   catchError(contactsController.get),
   /* #swagger.tags = ['Contact']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Запрос всех контактов или контактов по фильтру.'
    #swagger.parameters['limit'] = { description: 'Кол-во результатов в ответе.',
                type: 'number' }
@@ -37,6 +40,9 @@ router.post(
   auth,
   catchError(contactsController.add),
   /* #swagger.tags = ['Contact']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Добавление контакта.'
    #swagger.parameters['Contact'] = {
                in: 'body',
@@ -66,6 +72,9 @@ router.get(
   auth,
   catchError(contactsController.get),
   /* #swagger.tags = ['Contact']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Запрос контакта по ID.'
    #swagger.parameters['id'] = { description: 'ID Контакта.' }
    #swagger.responses[200] = {
@@ -89,6 +98,9 @@ router.patch(
   auth,
   catchError(contactsController.update),
   /* #swagger.tags = ['Contact']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Изменение контакта по ID.'
    #swagger.parameters['id'] = { description: 'ID Контакта.' }
    #swagger.parameters['Contact'] = {
@@ -119,6 +131,9 @@ router.delete(
   auth,
   catchError(contactsController.del),
   /* #swagger.tags = ['Contact']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Удаление Контакта по ID.'
    #swagger.parameters['id'] = { description: 'ID Контакта.' }
    #swagger.responses[200] = {

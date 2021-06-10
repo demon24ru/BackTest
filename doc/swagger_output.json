@@ -25,10 +25,11 @@
     "http"
   ],
   "securityDefinitions": {
-    "api_key": {
+    "BearerAuth": {
       "type": "apiKey",
       "name": "Authorization",
-      "in": "header"
+      "in": "header",
+      "description": "Авторизация"
     }
   },
   "consumes": [
@@ -175,7 +176,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -219,7 +225,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/companies/{id}": {
@@ -262,7 +273,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -313,7 +329,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -348,7 +369,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/companies/{id}/image": {
@@ -391,7 +417,12 @@
               "$ref": "#/definitions/Error"
             }
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/companies/{id}/image/{image_name}": {
@@ -441,7 +472,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/contacts/": {
@@ -489,7 +525,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -533,7 +574,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/contacts/{id}": {
@@ -576,7 +622,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "patch": {
         "tags": [
@@ -627,7 +678,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -662,7 +718,12 @@
             },
             "description": "Internal Server Error"
           }
-        }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     }
   },
@@ -721,11 +782,11 @@
         },
         "createdAt": {
           "type": "string",
-          "example": "Thu Jun 10 2021 13:55:06 GMT+0700 (Красноярск, стандартное время)"
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         },
         "updatedAt": {
           "type": "string",
-          "example": "Thu Jun 10 2021 13:55:06 GMT+0700 (Красноярск, стандартное время)"
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         }
       }
     },
@@ -876,12 +937,12 @@
           "example": 1
         },
         "createdAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         },
         "updatedAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         }
       }
     },
@@ -919,12 +980,12 @@
           }
         },
         "createdAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         },
         "updatedAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         }
       }
     },
@@ -1002,12 +1063,12 @@
           "$ref": "#/definitions/Contacts"
         },
         "createdAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         },
         "updatedAt": {
-          "type": "object",
-          "properties": {}
+          "type": "string",
+          "example": "Thu Jun 10 2021 14:34:52 GMT+0700 (Красноярск, стандартное время)"
         }
       }
     },

@@ -27,10 +27,11 @@ const doc = {
     },
   ],
   securityDefinitions: {
-    api_key: {
+    BearerAuth: {
       type: 'apiKey',
       name: 'Authorization',
       in: 'header',
+      description: 'Авторизация',
     },
   },
   definitions: {
@@ -91,8 +92,8 @@ const doc = {
       ],
       address: 'address',
       contactId: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: (new Date()).toString(),
+      updatedAt: (new Date()).toString(),
     },
     ContactIncludCompanies: {
       id: 1,
@@ -106,8 +107,8 @@ const doc = {
           $ref: '#/definitions/Companies',
         },
       ],
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: (new Date()).toString(),
+      updatedAt: (new Date()).toString(),
     },
     CompanyIncludContact: {
       id: 1,
@@ -131,8 +132,8 @@ const doc = {
       contact: {
         $ref: '#/definitions/Contacts',
       },
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      createdAt: (new Date()).toString(),
+      updatedAt: (new Date()).toString(),
     },
     AddUser: {
       $user: 'User',

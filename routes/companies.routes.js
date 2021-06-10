@@ -17,6 +17,9 @@ router.get(
   auth,
   catchError(companiesController.get),
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Запрос всех компаний или компаний по фильтру.'
    #swagger.parameters['status'] = { description: 'Компании с определенным статусом.',
                type: 'string' }
@@ -47,6 +50,9 @@ router.post(
   auth,
   catchError(companiesController.add),
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Добавление компании.'
    #swagger.parameters['Company'] = {
                in: 'body',
@@ -76,6 +82,9 @@ router.get(
   auth,
   catchError(companiesController.get),
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Запрос компаний по ID.'
    #swagger.parameters['id'] = { description: 'ID Компании.' }
    #swagger.responses[200] = {
@@ -99,6 +108,9 @@ router.patch(
   auth,
   catchError(companiesController.update),
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Изменение компании по ID.'
    #swagger.parameters['id'] = { description: 'ID Компании.' }
    #swagger.parameters['Company'] = {
@@ -129,6 +141,9 @@ router.delete(
   auth,
   catchError(companiesController.del),
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Удаление Компании по ID.'
    #swagger.parameters['id'] = { description: 'ID Компании.' }
    #swagger.responses[200] = {
@@ -151,6 +166,9 @@ router.post(
   filesParamsValidator.addCompanyImage,
   filesController.saveImage,
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Загрузка картинки Компании по ID.'
    #swagger.parameters['id'] = { description: 'ID Компании.' }
    #swagger.responses[200] = {
@@ -172,6 +190,9 @@ router.delete(
   filesParamsValidator.removeCompanyImage,
   filesController.removeImage,
   /* #swagger.tags = ['Company']
+  #swagger.security = [{
+               "BearerAuth": []
+        }]
    #swagger.description = 'Удаление картинки Компании по имени.'
    #swagger.parameters['id'] = { description: 'ID Компании.' }
    #swagger.parameters['image_name'] = { description: 'Имя картинки.' }

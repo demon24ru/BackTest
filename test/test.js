@@ -1,8 +1,11 @@
 const request = require('supertest');
 const assert = require('assert');
+const _ = require('lodash');
+const qs = require('qs');
 
 process.env.NODE_ENV = 'test';
 const app = require('../app');
+const { User } = require('../db');
 
 // eslint-disable-next-line no-unused-vars
 let auth;
@@ -13,11 +16,11 @@ describe('App auth', () => {
   it('has signup', (done) => {
     request(app)
       .post('/auth/signup')
-      .send({ user: 'User', password: '123451' })
+      .send({ user: 'UserTest', password: '123451' })
       .expect(200)
       .then((res) => {
         const { login } = res.body;
-        assert.deepStrictEqual(login, 'User');
+        assert.deepStrictEqual(login, 'UserTest');
         done();
       })
       .catch((err) => done(err));
@@ -26,10 +29,11 @@ describe('App auth', () => {
   it('has login', (done) => {
     request(app)
       .post('/auth/login')
-      .send({ user: 'User', password: '123451' })
+      .send({ user: 'UserTest', password: '123451' })
       .expect(200)
-      .then((res) => {
+      .then(async (res) => {
         auth = `Bearer ${res.body.token}`;
+        await User.destroy({ where: { login: 'UserTest' } });
         done();
       })
       .catch((err) => done(err));
@@ -40,33 +44,25 @@ describe('App auth', () => {
 describe('App Contacts', () => {
   let cid;
   let cUpdatedAt;
+  const testData = {
+    lastName: 'Григорьев',
+    firstName: 'Сергей',
+    patronymic: 'Петрович',
+    phone: '79162165588',
+    email: 'grigoriev@funeral.com',
+  };
 
   // eslint-disable-next-line no-undef
   it('post contact', (done) => {
     request(app)
       .post('/contacts')
       .set('Authorization', auth)
-      .send({
-        lastName: 'Григорьев',
-        firstName: 'Сергей',
-        patronymic: 'Петрович',
-        phone: '79162165588',
-        email: 'grigoriev@funeral.com',
-      })
+      .send(testData)
       .expect('Content-Type', /json/)
       .expect(200)
       .then((res) => {
-        const { id, createdAt, updatedAt } = res.body;
-        assert.deepStrictEqual(res.body, {
-          id,
-          lastName: 'Григорьев',
-          firstName: 'Сергей',
-          patronymic: 'Петрович',
-          phone: '79162165588',
-          email: 'grigoriev@funeral.com',
-          createdAt,
-          updatedAt,
-        });
+        const { id, updatedAt } = res.body;
+        assert.deepStrictEqual(_.omit(res.body, ['id', 'createdAt', 'updatedAt']), testData);
         cid = id;
         cUpdatedAt = updatedAt;
         done();
@@ -84,6 +80,43 @@ describe('App Contacts', () => {
   });
 
   // eslint-disable-next-line no-undef
+  it('get contacts with firstName: Сергей', (done) => {
+    request(app)
+      .get(`/contacts?${qs.stringify({ firstName: 'Сергей' })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((res) => {
+        assert.deepStrictEqual(res.body.map((item) => _.omit(item, ['id', 'createdAt', 'updatedAt'])), [testData]);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  // eslint-disable-next-line no-undef
+  it('get contacts with firstName: test', (done) => {
+    request(app)
+      .get(`/contacts?${qs.stringify({ firstName: 'test' })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(400, done);
+  });
+
+  // eslint-disable-next-line no-undef
+  it('get contacts with firstName: Сергей and limit 1', (done) => {
+    request(app)
+      .get(`/contacts?${qs.stringify({ firstName: 'Сергей', limit: 1 })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((res) => {
+        assert.deepStrictEqual(res.body.map((item) => _.omit(item, ['id', 'createdAt', 'updatedAt'])), [testData]);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  // eslint-disable-next-line no-undef
   it('get contact for id', (done) => {
     request(app)
       .get(`/contacts/${cid}`)
@@ -94,12 +127,8 @@ describe('App Contacts', () => {
         const { body } = res;
         delete body.createdAt;
         assert.deepStrictEqual(body, {
+          ...testData,
           id: cid,
-          lastName: 'Григорьев',
-          firstName: 'Сергей',
-          patronymic: 'Петрович',
-          phone: '79162165588',
-          email: 'grigoriev@funeral.com',
           updatedAt: cUpdatedAt,
         });
         done();
@@ -124,11 +153,7 @@ describe('App Contacts', () => {
         delete body.updatedAt;
         assert.deepStrictEqual(body, {
           id: cid,
-          lastName: 'Григорьев',
-          firstName: 'Сергей',
-          patronymic: 'Петрович',
-          phone: '79162165588',
-          email: 'test@test.test',
+          ...Object.assign(testData, { email: 'test@test.test' }),
         });
         done();
       })
@@ -155,6 +180,18 @@ describe('App Companies', () => {
   let cid;
   let contactId;
   let cUpdatedAt;
+  const testData = {
+    name: 'ООО Фирма «Перспективные захоронения»',
+    shortName: 'Перспективные захоронения',
+    businessEntity: 'ООО',
+    contract: {
+      no: '12345',
+      issue_date: '2015-03-12T00:00:00Z',
+    },
+    type: ['agent', 'contractor'],
+    status: 'active',
+    address: 'address',
+  };
 
   // eslint-disable-next-line no-undef
   it('post company', (done) => {
@@ -176,37 +213,14 @@ describe('App Companies', () => {
         return request(app)
           .post('/companies')
           .set('Authorization', auth)
-          .send({
-            contactId,
-            name: 'ООО Фирма «Перспективные захоронения»',
-            shortName: 'Перспективные захоронения',
-            businessEntity: 'ООО',
-            contract: {
-              no: '12345',
-              issue_date: '2015-03-12T00:00:00Z',
-            },
-            type: ['agent', 'contractor'],
-            status: 'active',
-            address: 'address',
-          })
+          .send(Object.assign(testData, { contactId, photos: [] }))
           .expect('Content-Type', /json/)
           .expect(200)
           .then((r) => {
             const { id, createdAt, updatedAt } = r.body;
             assert.deepStrictEqual(r.body, {
               id,
-              contactId,
-              name: 'ООО Фирма «Перспективные захоронения»',
-              shortName: 'Перспективные захоронения',
-              businessEntity: 'ООО',
-              contract: {
-                no: '12345',
-                issue_date: '2015-03-12T00:00:00Z',
-              },
-              type: ['agent', 'contractor'],
-              status: 'active',
-              photos: [],
-              address: 'address',
+              ...testData,
               createdAt,
               updatedAt,
             });
@@ -228,6 +242,43 @@ describe('App Companies', () => {
   });
 
   // eslint-disable-next-line no-undef
+  it('get companies with status: active', (done) => {
+    request(app)
+      .get(`/companies?${qs.stringify({ status: 'active' })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((res) => {
+        assert.deepStrictEqual(res.body.map((item) => _.omit(item, ['id', 'createdAt', 'updatedAt'])), [testData]);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  // eslint-disable-next-line no-undef
+  it('get companies with status: inactive', (done) => {
+    request(app)
+      .get(`/companies?${qs.stringify({ status: 'inactive' })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(400, done);
+  });
+
+  // eslint-disable-next-line no-undef
+  it('get companies with status: active and limit 1', (done) => {
+    request(app)
+      .get(`/companies?${qs.stringify({ status: 'active', limit: 1 })}`)
+      .set('Authorization', auth)
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((res) => {
+        assert.deepStrictEqual(res.body.map((item) => _.omit(item, ['id', 'createdAt', 'updatedAt'])), [testData]);
+        done();
+      })
+      .catch((err) => done(err));
+  });
+
+  // eslint-disable-next-line no-undef
   it('get company for id', (done) => {
     request(app)
       .get(`/companies/${cid}`)
@@ -239,18 +290,7 @@ describe('App Companies', () => {
         delete body.createdAt;
         assert.deepStrictEqual(body, {
           id: cid,
-          contactId,
-          name: 'ООО Фирма «Перспективные захоронения»',
-          shortName: 'Перспективные захоронения',
-          businessEntity: 'ООО',
-          contract: {
-            no: '12345',
-            issue_date: '2015-03-12T00:00:00Z',
-          },
-          type: ['agent', 'contractor'],
-          status: 'active',
-          photos: [],
-          address: 'address',
+          ...testData,
           updatedAt: cUpdatedAt,
         });
         done();
@@ -275,18 +315,7 @@ describe('App Companies', () => {
         delete body.updatedAt;
         assert.deepStrictEqual(body, {
           id: cid,
-          contactId,
-          name: 'ООО Фирма «Перспективные захоронения»',
-          shortName: 'Перспективные захоронения',
-          businessEntity: 'ООО',
-          contract: {
-            no: '12345',
-            issue_date: '2015-03-12T00:00:00Z',
-          },
-          type: ['agent', 'contractor'],
-          status: 'active',
-          photos: [],
-          address: 'teteteteteteteet',
+          ...Object.assign(testData, { address: 'teteteteteteteet' }),
         });
         done();
       })

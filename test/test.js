@@ -217,6 +217,7 @@ describe('App Companies', () => {
           .expect('Content-Type', /json/)
           .expect(200)
           .then((r) => {
+            // eslint-disable-next-line no-shadow
             const { id, createdAt, updatedAt } = r.body;
             assert.deepStrictEqual(r.body, {
               id,
